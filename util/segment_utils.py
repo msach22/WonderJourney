@@ -1,5 +1,4 @@
 import sys
-sys.path.append("/viscam/projects/wonderland/segment-anything")
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 import numpy as np
 from PIL import Image
@@ -64,7 +63,8 @@ def refine_disp_with_segments(disparity, segments, keep_threshold=7*0.3):
 
 
 def create_mask_generator():
-    sam_checkpoint = "/viscam/projects/wonderland/segment-anything/sam_vit_h_4b8939.pth"
+    # Add your own path
+    sam_checkpoint = "/sam_vit_h_4b8939.pth"
     sam = sam_model_registry["vit_h"](checkpoint=sam_checkpoint)
     sam.to(device='cuda')
     mask_generator = SamAutomaticMaskGenerator(
