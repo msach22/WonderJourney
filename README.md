@@ -71,7 +71,7 @@ wget https://github.com/isl-org/MiDaS/releases/download/v3_1/dpt_beit_large_512.
 
 Download Segment Anything checkpoint.
 ```bash
-https://huggingface.co/spaces/abhishek/StableSAM/resolve/main/sam_vit_h_4b8939.pth
+wget https://huggingface.co/spaces/abhishek/StableSAM/resolve/main/sam_vit_h_4b8939.pth
 ```
 ### Run examples 
 
