@@ -10,3 +10,5 @@ pillow==9.2.0
 einops
 omegaconf
 av
+openai
+segment_anything

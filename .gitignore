@@ -11,3 +11,4 @@ older*/
 *.pt
 environment.yml
 *zip*
+*.pth

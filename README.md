@@ -43,6 +43,7 @@ mamba install pytorch=1.13.0 torchvision pytorch-cuda=11.6 -c pytorch -c nvidia
 mamba install -c fvcore -c iopath -c conda-forge fvcore iopath
 mamba install -c bottler nvidiacub
 mamba install pytorch3d -c pytorch3d
+mamba install mkl==2024.0
 ```
 
 Install the rest of the requirements:
