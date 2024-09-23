@@ -366,7 +366,7 @@ if __name__ == "__main__":
             run(config)
         except Exception as e:
             print(e)
-            import ipdb
-            ipdb.post_mortem()
+            #import ipdb
+            #ipdb.post_mortem()
     else:
         run(config)
