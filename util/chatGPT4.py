@@ -97,13 +97,19 @@ class TextpromptGen:
                     model=self.model,
                     messages=messages
                 )
-                output = eval(response.choices[0].message.content)
-                if isinstance(output, dict):
-                    output = {
-                        "scene_name": [output['scene_name']] if isinstance(output['scene_name'], str) else output['scene_name'],
-                        "entities": [output['entities']] if isinstance(output['entities'], str) else output['entities'],
-                        "background": [output['background']] if isinstance(output['background'], str) else output['background']
-                    }
+                output = response.choices[0].message.content
+                try:
+                    print(output)
+                    output = eval(response)
+                    _, _, _ = output['scene_name'], output['entities'], output['background']
+                    if isinstance(output, tuple):
+                        output = output[0]
+                    if isinstance(output['scene_name'], str):
+                        output['scene_name'] = [output['scene_name']]
+                    if isinstance(output['entities'], str):
+                        output['entities'] = [output['entities']]
+                    if isinstance(output['background'], str):
+                        output['background'] = [output['background']]
                     break
             except OpenAIError as e:
                 print(f"API error: {e}")
