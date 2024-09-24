@@ -142,7 +142,12 @@ def run(config):
             scene_dict = pt_gen.run_conversation(scene_name=scene_dict['scene_name'], entities=scene_dict['entities'], style=style_prompt, background=scene_dict['background'], control_text=control_text_this)
             print("scene_dict")
             print(scene_dict)
-        inpainting_prompt = pt_gen.generate_prompt(style=style_prompt, entities=scene_dict['entities'], background=scene_dict['background'], scene_name=scene_dict['scene_name'])
+
+            scene_name_str = scene_dict['scene_name'][0] if isinstance(scene_dict['scene_name'], list) and scene_dict['scene_name'] else ""
+            background_str = scene_dict['background'][0] if isinstance(scene_dict['background'], list) and scene_dict['background'] else ""
+            entities_str = scene_dict['entities'][0] if isinstance(scene_dict['entities'], list) and scene_dict['entities'] else ""
+
+        inpainting_prompt = pt_gen.generate_prompt(style=style_prompt, entities=entities_str, background=background_str, scene_name=scene_name_str)
         
         for j in range(config['num_keyframes']):
 
