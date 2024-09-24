@@ -100,7 +100,7 @@ class TextpromptGen:
                 output = response.choices[0].message.content
                 try:
                     print(output)
-                    output = eval(response)
+                    output = eval(output)
                     _, _, _ = output['scene_name'], output['entities'], output['background']
                     if isinstance(output, tuple):
                         output = output[0]
