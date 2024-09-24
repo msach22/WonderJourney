@@ -150,7 +150,7 @@ class TextpromptGen:
         # Use OpenAI's latest image model or API for image analysis if available
         # Assuming OpenAI now handles image evaluations directly via the API
         response = client.chat.completions.create(
-            messages=[
+            messages=[{
                 "role": "user",
                 "content": [
                     {
@@ -164,8 +164,7 @@ class TextpromptGen:
                         }
                     }
                 ]
-
-            ],
+            }],
             model="gpt-4o",
         )
         return response
