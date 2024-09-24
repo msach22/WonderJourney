@@ -97,7 +97,6 @@ class TextpromptGen:
                     messages=messages
                 )
                 output = response.choices[0].message.content
-                print(output)
                 if isinstance(output, dict):
                     output = {
                         "scene_name": [output['scene_name']] if isinstance(output['scene_name'], str) else output['scene_name'],
@@ -114,6 +113,8 @@ class TextpromptGen:
             print("saving output")
             self.write_json(output)
 
+        print("returning output")
+        print(output)
         return output
 
     def generate_keywords(self, text):
