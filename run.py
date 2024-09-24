@@ -140,6 +140,8 @@ def run(config):
         if config['use_gpt']:
             control_text_this = control_text[i] if isinstance(control_text, list) else None
             scene_dict = pt_gen.run_conversation(scene_name=scene_dict['scene_name'], entities=scene_dict['entities'], style=style_prompt, background=scene_dict['background'], control_text=control_text_this)
+            print("scene_dict")
+            print(scene_dict)
         inpainting_prompt = pt_gen.generate_prompt(style=style_prompt, entities=scene_dict['entities'], background=scene_dict['background'], scene_name=scene_dict['scene_name'])
         
         for j in range(config['num_keyframes']):

@@ -33,8 +33,7 @@ class TextpromptGen:
             save_dir = Path(self.root_path)
         save_dir.mkdir(parents=True, exist_ok=True)
         try:
-            print("trying output in write_json")
-            output['background'] = self.generate_keywords(output['background'])
+            output['background'][0] = self.generate_keywords(output['background'][0])
             with open(save_dir / f'scene_{str(self.scene_num).zfill(2)}.json', "w") as json_file:
                 print("saving scene")
                 json.dump(output, json_file, indent=4)
@@ -98,7 +97,7 @@ class TextpromptGen:
                     model=self.model,
                     messages=messages
                 )
-                output = response.choices[0].message.content
+                output = eval(response.choices[0].message.content)
                 if isinstance(output, dict):
                     output = {
                         "scene_name": [output['scene_name']] if isinstance(output['scene_name'], str) else output['scene_name'],
@@ -112,11 +111,8 @@ class TextpromptGen:
                 continue
 
         if self.save_prompt:
-            print("saving output")
             self.write_json(output)
 
-        print("returning output")
-        print(output)
         return output
 
     def generate_keywords(self, text):
