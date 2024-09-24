@@ -55,17 +55,17 @@ class TextpromptGen:
             content = f"Please generate a brief scene background with Scene name: {scene_name}; Background: {str(background).strip('.')}; Entities: {str(entities)}; Style: {style}"
 
         messages = [
-            {"role": "system", "content": "You are an intelligent scene generator. Generate a background prompt without mentioning entities."},
+            {"role": "system", "content": "You are an intelligent scene generator. Generate a background prompt without mentioning entities. Please use the format below: (the output should be json format)\n \
+                        {'scene_name': ['scene_name'], 'entities': ['entity_1', 'entity_2', 'entity_3'], 'background': ['background prompt']}"},
             {"role": "user", "content": content}
         ]
 
         response = client.chat.completions.create(
             model=self.model,
-            messages=messages,
-            timeout=10
+            messages=messages
         )
 
-        return response.choices[0].message['content'].strip(".")
+        return response.choices[0].message.content
 
     def run_conversation(self, style=None, entities=None, scene_name=None, background=None, control_text=None):
         if control_text:
@@ -85,18 +85,18 @@ class TextpromptGen:
             assert self.scene_num > 0, 'No scene content available to regenerate.'
 
         messages = [
-            {"role": "system", "content": "You are an intelligent scene generator. Generate a background without entities."},
+            {"role": "system", "content": "You are an intelligent scene generator. Generate a background without entities. Please use the format below: (the output should be json format)\n \
+                        {'scene_name': ['scene_name'], 'entities': ['entity_1', 'entity_2', 'entity_3'], 'background': ['background prompt']}"},
             {"role": "user", "content": self.content}
         ]
-        output = {}
+        output = None
         for _ in range(10):
             try:
                 response = client.chat.completions.create(
                     model=self.model,
-                    messages=messages,
-                    timeout=10,
+                    messages=messages
                 )
-                output = eval(response.choices[0].message['content'])
+                output = response.choices[0].message.content
                 if isinstance(output, dict):
                     output = {
                         "scene_name": [output['scene_name']] if isinstance(output['scene_name'], str) else output['scene_name'],
@@ -110,6 +110,7 @@ class TextpromptGen:
                 continue
 
         if self.save_prompt:
+            print("saving output")
             self.write_json(output)
 
         return output
