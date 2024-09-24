@@ -150,7 +150,22 @@ class TextpromptGen:
         # Use OpenAI's latest image model or API for image analysis if available
         # Assuming OpenAI now handles image evaluations directly via the API
         response = client.chat.completions.create(
-            image=base64_image,
-            model="gpt-4-vision",
+            messages=[
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Analyze this image."
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}"
+                        }
+                    }
+                ]
+
+            ],
+            model="gpt-4o",
         )
         return response
