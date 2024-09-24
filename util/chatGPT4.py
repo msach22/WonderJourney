@@ -111,6 +111,9 @@ class TextpromptGen:
                     if isinstance(output['background'], str):
                         output['background'] = [output['background']]
                     break
+                except Exception as e:
+                    print("An error occurred when transfering the output of gpt-4 into a dict, let's try again!", str(e))
+                    continue
             except OpenAIError as e:
                 print(f"API error: {e}")
                 time.sleep(1)
