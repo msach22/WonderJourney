@@ -97,21 +97,28 @@ class TextpromptGen:
                     messages=messages
                 )
                 output = response.choices[0].message.content
-                print(output)
-                if isinstance(output, dict):
-                    output = {
-                        "scene_name": [output['scene_name']] if isinstance(output['scene_name'], str) else output['scene_name'],
-                        "entities": [output['entities']] if isinstance(output['entities'], str) else output['entities'],
-                        "background": [output['background']] if isinstance(output['background'], str) else output['background']
-                    }
+                try:
+                    print(output)
+                    output = eval(output)
+                    _, _, _ = output['scene_name'], output['entities'], output['background']
+                    if isinstance(output, tuple):
+                        output = output[0]
+                    if isinstance(output['scene_name'], str):
+                        output['scene_name'] = [output['scene_name']]
+                    if isinstance(output['entities'], str):
+                        output['entities'] = [output['entities']]
+                    if isinstance(output['background'], str):
+                        output['background'] = [output['background']]
                     break
+                except Exception as e:
+                    print("An error occurred when transfering the output of gpt-4 into a dict, let's try again!", str(e))
+                    continue
             except OpenAIError as e:
                 print(f"API error: {e}")
                 time.sleep(1)
                 continue
 
         if self.save_prompt:
-            print("saving output")
             self.write_json(output)
 
         return output
@@ -138,11 +145,52 @@ class TextpromptGen:
     def evaluate_image(self, image, eval_blur=True):
         print("evaluate_image")
         base64_image = self.encode_image_pil(image)
+        has_border = True
+        has_blur = False
 
         # Use OpenAI's latest image model or API for image analysis if available
         # Assuming OpenAI now handles image evaluations directly via the API
         response = client.chat.completions.create(
-            image=base64_image,
-            model="gpt-4-vision",
+            messages=[{
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Along the four borders of this image, is there anything that looks like thin border, thin stripe, photograph border, painting border, or painting frame? Please look very closely to the four edges and try hard, because the borders are very slim and you may easily overlook them. I would lose my job if there is a border and you overlook it. If you are not sure, then please say yes."
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}"
+                        }
+                    }
+                ]
+            }],
+            model="gpt-4o",
         )
-        return response
+        output = response.choices[0].message.content
+        has_border = output == 'yes'
+
+        if eval_blur:
+            response = client.chat.completions.create(
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Does this image have a significant blur issue or blurry effect caused by out of focus around the image edges? You only have to pay attention to the four borders of the image. Your answer should be simply 'Yes' or 'No'."
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}"
+                            }
+                        }
+                    ]
+                }],
+                model="gpt-4o",
+            ) 
+            output = response.choices[0].message.content
+            has_blur = output == 'yes'
+
+        return has_border, has_blur
