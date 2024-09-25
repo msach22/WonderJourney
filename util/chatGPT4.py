@@ -35,7 +35,6 @@ class TextpromptGen:
         try:
             output['background'][0] = self.generate_keywords(output['background'][0])
             with open(save_dir / f'scene_{str(self.scene_num).zfill(2)}.json', "w") as json_file:
-                print("saving scene")
                 json.dump(output, json_file, indent=4)
         except Exception as e:
             pass
